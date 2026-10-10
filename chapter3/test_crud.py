@@ -45,3 +45,15 @@ def test_get_players_by_date(db_session):
         player.last_changed_date >= date(2024, 4, 1)
         for player in players
     )
+
+def test_get_players_pagination(db_session):
+    first_page = crud.get_players(db_session, skip=0, limit=5)
+    second_page = crud.get_players(db_session, skip=5, limit=5)
+
+    assert len(first_page) == 5
+    assert len(second_page) == 5
+
+    first_page_ids = {player.player_id for player in first_page}
+    second_page_ids = {player.player_id for player in second_page}
+
+    assert first_page_ids.isdisjoint(second_page_ids)
